@@ -8,6 +8,7 @@ import { SeedModule } from './seed/seed.module';
 import { ProductModule } from './product/product.module';
 import { HandleFilesModule } from './handle-files/handle-files.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     ProductModule,
     SeedModule,
     HandleFilesModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
