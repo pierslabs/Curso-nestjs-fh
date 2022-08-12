@@ -7,6 +7,7 @@ import {
   Headers,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiTags } from '@nestjs/swagger';
 import { IncomingHttpHeaders } from 'http';
 import { AuthService } from './auth.service';
 import { Auth, GetUser, RawHeaders, RoleProtected } from './decorators';
@@ -15,6 +16,7 @@ import { User } from './entities/auth.entity';
 import { UserRoleGuard } from './guards/user-role.guard';
 import { EValidRoles } from './interfaces';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -45,6 +47,12 @@ export class AuthController {
       rawHeaders,
       headers,
     };
+  }
+
+  @Get('check-auth-status')
+  @Auth()
+  checkAuthStatus(@GetUser() user: User) {
+    return this.authService.checkAuthStatus(user);
   }
 
   // @SetMetadata('roles', ['admin', 'super-user'])
