@@ -13,6 +13,7 @@ import { Product } from './entities/product.entity';
 import { validate as isUUID } from 'uuid';
 import { ProductImage } from './entities/product-imgae.entity';
 import { PaginationDTO } from './dto/pagination.dto';
+import { User } from '../auth/entities/auth.entity';
 
 @Injectable()
 export class ProductService {
@@ -28,12 +29,13 @@ export class ProductService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, user: User) {
     try {
       const { images = [], ...productDetails } = createProductDto;
 
       const product = this.productRepo.create({
         ...productDetails,
+        user,
         images: images.map((image: any) =>
           this.productImageRepo.create({ url: image }),
         ),
@@ -94,7 +96,7 @@ export class ProductService {
     };
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto) {
+  async update(id: string, updateProductDto: UpdateProductDto, user: User) {
     const { images, ...toUpdated } = updateProductDto;
 
     const product = await this.productRepo.preload({
@@ -119,6 +121,8 @@ export class ProductService {
           this.productImageRepo.create({ url: image }),
         );
       }
+
+      product.user = user;
       await queryRunner.manager.save(product);
       // await this.productRepo.save(product);
 

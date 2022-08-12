@@ -13,7 +13,7 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
-import { IJwtPayload } from './interfaces/jwt-payload.interface';
+import { IJwtPayload } from './interfaces';
 
 @Injectable()
 export class AuthService {
@@ -36,7 +36,7 @@ export class AuthService {
       delete user.password;
       return {
         ...user,
-        token: this.getJWT({ email: user.email }),
+        token: this.getJWT({ id: user.id }),
       };
     } catch (error) {
       this.handleDbError(error);
@@ -47,7 +47,7 @@ export class AuthService {
     const { password, email } = loginUserDto;
     const user = await this.userRepo.findOne({
       where: { email },
-      select: { email: true, password: true },
+      select: { email: true, password: true, id: true },
     });
 
     if (!user) throw new NotFoundException('Credentials are not valid.');
@@ -56,7 +56,7 @@ export class AuthService {
       throw new UnauthorizedException('Credentials are not valid.');
     return {
       ...user,
-      token: this.getJWT({ email: user.email }),
+      token: this.getJWT({ id: user.id }),
     };
   }
 
